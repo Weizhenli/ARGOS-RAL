@@ -113,8 +113,8 @@ bur_sol_plot <- ggplot(gg_bur_data, aes(x, t, fill= u)) + geom_tile()+
   coord_cartesian(clip="off")
 
 ## bur noisy data plot ---------------------------
-load(paste0(data_path, "bur_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path, "bur_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/", "bur_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"Tests/Outputs/", "bur_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(bur_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(bur_density_noise_ada_lasso_pareto) <- 'our'
@@ -179,8 +179,8 @@ bur_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## bur noiseless plot ----------------------
-load(paste0(data_path,"bur_SG_noiseless_seed_10_success_rate_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"bur_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","bur_SG_noiseless_seed_10_success_rate_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"Tests/Outputs/","bur_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.2,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -261,8 +261,8 @@ ad_sol_plot <- ggplot(gg_ad_data, aes(x, t, fill= c)) + geom_tile()+
   coord_cartesian(clip="off")
 
 ## ad noisy data plot ---------------------------
-load(paste0(data_path, "more_test2/ad_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path, "more_test2/ad_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/ad_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/ad_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(ad_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(ad_density_noise_ada_lasso_pareto) <- 'our'
@@ -328,8 +328,8 @@ ad_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## ad noiseless plot ----------------------
-load(paste0(data_path,"more_test2/ad_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"more_test2/ad_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/ad_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/ad_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,5.2,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -394,7 +394,7 @@ ad_plot2 <- arrangeGrob(ad_title, ad_sol_plot,ad_plot1,nrow=3,heights =c(2,7,10)
 
 ## ----NS plot , fig.height=4, fig.width=8-----------------------------------------------
 # NS plots --------------------------
-path = './pde_solver_data/ibpm15300.plt'
+path = './pde_solver_data/ibpm15300.txt'
 library(ggplot2);library(plot3D);library(RColorBrewer)
 gre <- read.table(path,sep='',header=F,fill=T,skip=6,
                   col.names=c('x','y','u','v','Vorticity'))
@@ -426,8 +426,8 @@ NS_sol_plot <- ggplot()+geom_raster(data=plot_data,aes(x=x,y=y,fill=w))+
   solution_theme + guides(fill = guide_colourbar(nbin = 3))+
   coord_cartesian(clip="off")
 ## NS noise data plot -------------------------
-load(paste0(data_path,"NS_SG_noise_density_seed_10_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"NS_SG_noise_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","NS_SG_noise_density_seed_10_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","NS_SG_noise_seed_10_rudy_d_thred.RData"))
 
 dens_fun <- function(noise_coeff, true_terms = c("w_{xx}", "w_{yy}", "uw_{x}", "vw_{y}")){
   dens_noise <- sapply(seq_along(noise_coeff), function(i){
@@ -508,8 +508,8 @@ NS_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## noiseless data plot ---------------------------
-load(paste0(data_path,"NS_SG_noiseless_density_seed_10_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"NS_SG_noiseless_density_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","NS_SG_noiseless_density_seed_10_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"Tests/Outputs/","NS_SG_noiseless_density_seed_10_rudy_d_thred.RData"))
 
 # num <- round(10^(seq(log10(200), log10(3000*50), length=12)))
 num <- (seq(2, 5.0, 0.2))
@@ -598,8 +598,8 @@ cable_sol_plot <- ggplot(gg_cable_data, aes(x, t, fill= u)) + geom_tile()+
   coord_cartesian(clip="off")
 
 ## cable noisy data plot ---------------------------
-load(paste0(data_path, "more_test2/cable_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path, "more_test2/cable_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/cable_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/cable_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(cable_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(cable_density_noise_ada_lasso_pareto) <- 'our'
@@ -669,8 +669,8 @@ cable_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## cable noiseless plot ----------------------
-load(paste0(data_path,"more_test2/cable_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"more_test2/cable_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/cable_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/cable_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.4,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -759,8 +759,8 @@ RD_sol_plot <- ggplot(gg_RD_data, aes(x, y, fill= value))+
         ) +
   coord_cartesian(clip="off")
 ## noise data plot -------------------------
-load(paste0(data_path,"../RD/RD_SG_noise_density_seed_10_snr_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"RD_SG_noise_density_seed_10_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","../RD/RD_SG_noise_density_seed_10_snr_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"Tests/Outputs/","RD_SG_noise_density_seed_10_snr_rudy_d_thred.RData"))
 
 dens_fun_RD <- function(noise_coeff, true_terms, which){
   dens_noise <- sapply(seq_along(noise_coeff), function(i){
@@ -868,9 +868,9 @@ RD_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## noiseless data ----------------------------
-load(paste0(data_path,"RD_SG_noiseless_seed_10_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","RD_SG_noiseless_seed_10_ada_lasso_pareto.RData"))
 # load("RD/RD_SG_noiseless_200_150000_seed10_MSA_lasso_pareto_AIC.RData")
-load(paste0(data_path,"RD_SG_noiseless_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","RD_SG_noiseless_seed_10_rudy_d_thred.RData"))
 # num <- round(10^(seq(2.2, 5, 0.2)))
 num <- seq(2.2, 5, 0.2)
 
@@ -973,8 +973,8 @@ kdv_sol_plot <- ggplot(gg_kdv_data) +
   coord_cartesian(clip="off")
 
 ## kdv noisy plot -----------------------
-load(paste0(data_path,"kdv_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"kdv_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","kdv_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","kdv_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(kdv_density_noise_rudy_list) <- paste0("rudy_", d_tols)
 dens_snr_all <- c(list(our=kdv_density_noise_ada_lasso_pareto[[1]]), kdv_density_noise_rudy_list)
@@ -1039,8 +1039,8 @@ kdv_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## kdv noiseless plot -----------------------
-load(paste0(data_path,"kdv_SG_noiseless_seed_10_success_rate_pareto_AIC.RData"))
-load(paste0(data_path,"kdv_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","kdv_SG_noiseless_seed_10_success_rate_pareto_AIC.RData"))
+load(paste0(data_path,"Tests/Outputs/","kdv_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 # num <- round(10^(seq(2,4.8,0.2)))
 num <- seq(2,4.8,0.2)
 d_tols <- c(0.2,2,10)
@@ -1116,7 +1116,7 @@ qho_sol_plot <- ggplot(gg_qho_data, aes(x, t, fill= u)) + geom_tile()+
   coord_cartesian(clip="off")
 
 ## qho noisy plot -----------------------
-load(paste0(data_path,"qho_SG_noise_seed_10_samp_100_snr_ada_rudy_back.RData"))
+load(paste0(data_path,"Tests/Outputs/","qho_SG_noise_seed_10_samp_100_snr_ada_rudy_back.RData"))
 d_tols <- c(0.2,2,10)
 dens_snr_all <- list(our = qho_density_noise_ada_AIC, rudy_0.2 = qho_density_noise_rudy_0.2,
                      rudy_2 = qho_density_noise_rudy_2, rudy_10 = qho_density_noise_rudy_10)
@@ -1182,7 +1182,7 @@ qho_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA)) 
 
 ## qho noiseless plot -----------------------
-load(paste0(data_path,"qho_SG_noiseless_seed_10_n_ada_rudy_back.RData"))
+load(paste0(data_path,"Tests/Outputs/","qho_SG_noiseless_seed_10_n_ada_rudy_back.RData"))
 # num <- round(10^(seq(2.2,5.2,0.2)))
 num <- seq(2.2,5.2,0.2)
 d_tols <- c(0.2,2,10)
@@ -1255,8 +1255,8 @@ trans_sol_plot <- ggplot(gg_trans_data, aes(x, t, fill= u)) + geom_tile()+
   solution_theme+
   coord_cartesian(clip="off")
 ## trans noisy data plot ---------------------------
-load(paste0(data_path, "more_test2/trans_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path, "more_test2/trans_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/trans_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/trans_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(trans_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(trans_density_noise_ada_lasso_pareto) <- 'our'
@@ -1326,8 +1326,8 @@ trans_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## trans noiseless plot ----------------------
-load(paste0(data_path,"more_test2/trans_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"more_test2/trans_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/trans_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/trans_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,5,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -1402,8 +1402,8 @@ heat_sol_plot <- ggplot(gg_heat_data, aes(x, t, fill= u)) + geom_tile()+ geom_co
   solution_theme+
   coord_cartesian(clip="off")
 ## heat noisy data plot ---------------------------
-load(paste0(data_path, "more_test2/heat_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path, "more_test2/heat_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/heat_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/", "more_test2/heat_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(heat_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(heat_density_noise_ada_lasso_pareto) <- 'our'
@@ -1471,8 +1471,8 @@ heat_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## heat noiseless plot ----------------------
-load(paste0(data_path,"more_test2/heat_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"more_test2/heat_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/heat_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/heat_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.8,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -1569,7 +1569,7 @@ keller_sol_plot <- ggplot(gg_keller_data, aes(x, t, fill= value))+
   coord_cartesian(clip="off")
 
 ## keller noiseless ------------------
-load(paste0(data_path,"more_test2/keller_segel_FD_noiseless_ham8_ada_rudy_back.RData"))
+load(paste0(data_path,"Tests/Outputs/","more_test2/keller_segel_FD_noiseless_ham8_ada_rudy_back.RData"))
 
 # num <- 10^(seq(2.4,5,0.2)) 
 num <- (seq(2.4,5,0.2)) 
