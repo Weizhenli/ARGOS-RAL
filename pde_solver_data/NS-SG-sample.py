@@ -2,7 +2,7 @@
 """
 Created on Thu Sep 16 09:13:24 2021
 
-@author: Administrator
+@author: Weizhen Li
 """
 
 import cv2 as cv
@@ -11,16 +11,13 @@ import numpy as np
 import scipy.io as sio
 import itertools
 from matplotlib import pyplot as plt
-import glob,os,re,time,datetime,sys
 import pandas as pd
 from sklearn import metrics
-#path = r'D:/Users/Administrator/OneDrive - Durham University/Weizhen Li sharing folder/codes/python/'
-# path = r'/ddn/data/cfzh32/for_python/TVR'
-path = r'/nobackup/cfzh32/for_python/TVR'
-sys.path.append(path)
-from func.PDE_FIND2_1 import *
+import operator
 import multiprocessing
 from functools import partial
+
+path = r'/nmt/d/GitHub/ARGOS-RAL/' # folder for the GitHub repository
 
 def SG_point(u, dx, deg = 3, diff = 1):
     width = len(u)
@@ -29,8 +26,6 @@ def SG_point(u, dx, deg = 3, diff = 1):
     return(derivatives)
 
 def mf_point(u, index,kern='Gauss'):
-    #weight = np.array([[[0,1,0],[1,2,1],[0,1,0]],[[1,2,1],[2,4,2],[1,2,1]],[[0,1,0],[1,2,1],[0,1,0]]])/28 # Guassian 
-    #w = [1,2,1]
     if kern == 'Gauss':
         w = cv.getGaussianKernel(3,0)
         weight = np.outer(np.outer(w, w),w).reshape(3,3,3)
@@ -39,10 +34,6 @@ def mf_point(u, index,kern='Gauss'):
     #weight = weight/np.sum(weight)
     [x,y,t] = index
     u_ = np.sum(weight*u[(x-1):(x+2),(y-1):(y+2),(t-1):(t+2)])
-    #weight = np.array([[1,2,1],[2,4,2],[1,2,1]])
-    #[x,y,t] = index
-    #u_ = np.mean(weight*u[(x-1):(x+2),(y-1):(y+2),t])
-    #u_ = cv.GaussianBlur(u[(x-1):(x+2),(y-1):(y+2),(t-1):(t+2)],(3,3,3))
     return(u_)
 
 def mef_point(u,index):
@@ -70,12 +61,10 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
     dx = 0.02
     dy = 0.02
     
-    #path = r'D:/Users/Administrator/OneDrive - Durham University/Weizhen Li sharing folder/codes/python/'
-    # path = r'/ddn/data/cfzh32/for_python/TVR/func/'
-    path = r'/nobackup/cfzh32/for_python/TVR/func/'
-    U1 = np.load(path+'U1.npy')
-    V1 = np.load(path+'V1.npy')
-    W1 = np.load(path+'W1.npy')
+    path2 = path + r'pde_solver_data/Solve_NS/'
+    U1 = np.load(path2+'U1.npy')
+    V1 = np.load(path2+'V1.npy')
+    W1 = np.load(path2+'W1.npy')
     
     xmin = 100
     xmax = 425
@@ -99,7 +88,6 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
         uun,sigmaun,vun = np.linalg.svd(Un, full_matrices=False); vun = vun.T
         uvn,sigmavn,vvn = np.linalg.svd(Vn, full_matrices=False); vvn = vvn.T
         
-        #dim_w = 26;dim_u = 20;dim_v = 20
         dim_w = int(np.array(np.where(np.abs(np.diff(sigmawn))>1e-2))[:,-1])
         dim_u = int(np.array(np.where(np.abs(np.diff(sigmaun))>1e-2))[:,-1])
         dim_v = int(np.array(np.where(np.abs(np.diff(sigmavn))>1e-2))[:,-1])
@@ -112,12 +100,6 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
         Un = Un.reshape(n,m,steps)
         Vn = Vn.reshape(n,m,steps)
     
-    #deg = 5
-    #boundary_x = 10
-    #np.random.seed(0)
-    #num_xy = 300
-    #num_t = 5
-    #num_points = num_xy * num_t
     if deg == None:
         g_deg = np.arange(deg_min,deg_max+1)
         x_s = np.random.choice(np.arange(boundary_max+1,n-boundary_max-1),num_xy,replace=True)
@@ -129,7 +111,6 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
         mse_x = np.ones((deg_max,boundary_max))*np.inf
         mse_y = np.ones((deg_max,boundary_max))*np.inf
         for d in g_deg:
-            #bound_min = int((d+7-(d % 2)-1)/2)
             bound_min = int((d+3-(d % 2)-1)/2)
             g_bound = np.arange(bound_min,boundary_max+1)
             for j in g_bound:
@@ -185,7 +166,6 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
     wyy = np.zeros((len(points_xyt),1))
     
     for p in range(len(points_xyt)):
-        #p=1
         [x,y,t] = points_xyt[p]
         if denoise == 'mf':
             w[p] = mf_point(Wn,[x,y,t])#Ws[x,y,t]
@@ -233,17 +213,14 @@ def sam_rd_parallel(p,j,d,points_xyt,Un,Vn,dt,dx,dy):
     v_t = SG_point(Vn[x,y,(t-j):(t+j+1)],dt,deg=d,diff=0)
     v_x = SG_point(Vn[(x-j):(x+j+1),y,t],dx,deg=d,diff=0)
     v_y = SG_point(Vn[x,(y-j):(y+j+1),t],dy,deg=d,diff=0)
-    #out = np.vstack((u_t,u_x,u_y,v_t,v_x,v_y)).T
     out = [u_t,u_x,u_y,v_t,v_x,v_y]
     return(out)
 
 
 def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6,cores=2):
-    #data = sio.loadmat('F:/reaction_diffusion_big.mat')
     num_xy = int(num_xy); num_t = int(num_t); boundary_max = int(boundary_max)
     deg_min = int(deg_min); deg_max = int(deg_max); cores = int(cores)
-    # data = sio.loadmat('/ddn/home/cfzh32/for_matlab/reaction_diffusion_big.mat')
-    data = sio.loadmat('/nobackup/cfzh32/for_matlab/reaction_diffusion_big.mat')
+    data = sio.loadmat(path + r'pde_solver_data/reaction_diffusion_big.mat')
     t = data['t'][:,0]
     x = data['x'][0,:]
     y = data['y'][0,:]
@@ -258,13 +235,6 @@ def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6
     dt = t[2]-t[1]
     Un = U + noise*np.std(U)*np.random.randn(n,n,steps)
     Vn = V + noise*np.std(V)*np.random.randn(n,n,steps)
-    
-    #deg = 5
-    #boundary = deg*2
-    #boundary_x = 10
-    #np.random.seed(0)
-    #num_xy = 500
-    #num_t = 5*2
     
     if deg == None:
         g_deg = np.arange(deg_min,deg_max+1)
@@ -281,7 +251,6 @@ def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6
         mse_x_v = np.ones((deg_max,boundary_max))*np.inf
         mse_y_v = np.ones((deg_max,boundary_max))*np.inf
         for d in g_deg:
-            #bound_min = int((d+7-(d % 2)-1)/2)
             bound_min = int((d+3-(d % 2)-1)/2)
             g_bound = np.arange(bound_min,boundary_max+1)
             for j in g_bound:
@@ -292,7 +261,6 @@ def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6
                     res1 = pool.map(sam_rd_parallel2, list(range(len(points_xyt))))
                     pool.close()
                     pool.join()
-                    #[u_t,u_x,u_y,v_t,v_x,v_y] = res1
                     res1 = np.array(res1)
                     u_t = res1[:,0]; u_x = res1[:,1]; u_y = res1[:,2]
                     v_t = res1[:,3]; v_x = res1[:,4]; v_y = res1[:,5]
@@ -393,3 +361,71 @@ def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6
     df.columns = ['ut','vt']+description
     
     return(df)
+
+
+def build_Theta(data, derivatives, derivatives_description, P, data_description = None):
+    """
+    builds a matrix with columns representing polynoimials up to degree P of all variables
+
+    This is used when we subsample and take all the derivatives point by point or if there is an 
+    extra input (Q in the paper) to put in.
+
+    input:
+        data: column 0 is U, and columns 1:end are Q
+        derivatives: a bunch of derivatives of U and maybe Q, should start with a column of ones
+        derivatives_description: description of what derivatives have been passed in
+        P: max power of polynomial function of U to be included in Theta
+
+    returns:
+        Theta = Theta(U,Q)
+        descr = description of what all the columns in Theta are
+    """
+    
+    n,d = data.shape
+    m, d2 = derivatives.shape
+    if n != m: raise Exception('dimension error')
+    if data_description is not None: 
+        if len(data_description) != d: raise Exception('data descrption error')
+    
+    # Create a list of all polynomials in d variables up to degree P
+    rhs_functions = {}
+    f = lambda x, y : np.prod(np.power(list(x), list(y)))
+    powers = []            
+    for p in range(1,P+1):
+            size = d + p - 1
+            for indices in itertools.combinations(range(size), d-1):
+                starts = [0] + [index+1 for index in indices]
+                stops = indices + (size,)
+                powers.append(tuple(map(operator.sub, stops, starts)))
+    for power in powers: rhs_functions[power] = [lambda x, y = power: f(x,y), power]
+
+    # First column of Theta is just ones.
+    Theta = np.ones((n,1), dtype=np.complex64)
+    descr = ['']
+    
+    # Add the derivaitves onto Theta
+    for D in range(1,derivatives.shape[1]):
+        Theta = np.hstack([Theta, derivatives[:,D].reshape(n,1)])
+        descr.append(derivatives_description[D])
+        
+    # Add on derivatives times polynomials
+    for D in range(derivatives.shape[1]):
+        for k in rhs_functions.keys():
+            func = rhs_functions[k][0]
+            new_column = np.zeros((n,1), dtype=np.complex64)
+            for i in range(n):
+                new_column[i] = func(data[i,:])*derivatives[i,D]
+            Theta = np.hstack([Theta, new_column])
+            if data_description is None: descr.append(str(rhs_functions[k][1]) + derivatives_description[D])
+            else:
+                function_description = ''
+                for j in range(d):
+                    if rhs_functions[k][1][j] != 0:
+                        if rhs_functions[k][1][j] == 1:
+                            function_description = function_description + data_description[j]
+                        else:
+                            function_description = function_description + data_description[j] + '^' + str(rhs_functions[k][1][j])
+                descr.append(function_description + derivatives_description[D])
+
+    return Theta, descr
+

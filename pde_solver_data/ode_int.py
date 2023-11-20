@@ -77,7 +77,7 @@ def pde_data(coefs, term_names, x, t, init, method='RK45'):
 
     return(u, dx, dt)
 
-# %% 
+# %% examples 
 # if __name__ == '__main__':
 #     import matplotlib.pyplot as plt
 #     from matplotlib import cm
@@ -86,7 +86,7 @@ def pde_data(coefs, term_names, x, t, init, method='RK45'):
 #     t = np.arange(0,10,0.01)
 #     xx, tt = np.meshgrid(x, t)
 #     init = np.exp(-(x+2)**2)
-#     u, dx, dt = pde_data([-1.0589,0.158214],['uu_{x}','u_{xx}'],x,t,init) # burgers
+#     u, dx, dt = pde_data([-1.,0.1],['uu_{x}','u_{xx}'],x,t,init) # burgers
 #     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 #     ax.plot_surface(xx, tt, u.reshape((len(t),len(x))), rstride=1, cstride=1,cmap=cm.coolwarm, linewidth=0, antialiased=False)
     

@@ -394,7 +394,7 @@ ad_plot2 <- arrangeGrob(ad_title, ad_sol_plot,ad_plot1,nrow=3,heights =c(2,7,10)
 
 ## ----NS plot , fig.height=4, fig.width=8-----------------------------------------------
 # NS plots --------------------------
-path = './pde_solver_data/ibpm15300.txt'
+path = './pde_solver_data/NS/ibpm15300.txt'
 library(ggplot2);library(plot3D);library(RColorBrewer)
 gre <- read.table(path,sep='',header=F,fill=T,skip=6,
                   col.names=c('x','y','u','v','Vorticity'))

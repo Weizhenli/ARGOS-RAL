@@ -1,5 +1,5 @@
 rm(list=ls())
-library(glmnet);library(leaps);library(reticulate);library(caret)
+library(glmnet);library(reticulate)
 library(doParallel)
 seed=10
 set.seed(seed)
