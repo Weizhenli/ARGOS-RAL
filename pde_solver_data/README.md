@@ -28,7 +28,10 @@ Reaction-diffusion is solved using *RD_solver.m*. The defined function is in *re
 
 ### References
 [1] Andrei D. Polyanin and Valentin F. Zaitsev, Handbook of Nonlinear Partial Differential Equations, 2nd ed. New York: Chapman and Hall/CRC, 2012.
+
 [2] S. H. Rudy, S. L. Brunton, J. L. Proctor, and J. N. Kutz, ‘Data-driven discovery of partial differential equations’, Sci. Adv., vol. 3, no. 4, p. e1602614, Apr. 2017, doi: 10.1126/sciadv.1602614.
+
 [3] K. Taira and T. Colonius, ‘The immersed boundary method: A projection approach’, Journal of Computational Physics, vol. 225, no. 2, pp. 2118–2137, 2007, doi: 10.1016/j.jcp.2007.03.005.
+
 [4] T. Colonius and K. Taira, ‘A fast immersed boundary method using a nullspace approach and multi-domain far-field boundary conditions’, Computer Methods in Applied Mechanics and Engineering, vol. 197, no. 25, pp. 2131–2146, 2008, doi: 10.1016/j.cma.2007.08.014.
 
