@@ -56,4 +56,4 @@ matplotlib
 multiprocessing
 ```
 
-When running test,s please check whether the working folder is correct. 
+When running tests, please check whether the working folder is correct. 
