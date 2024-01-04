@@ -36,10 +36,14 @@ titles_plot <- function(plot_title, plot_lab, plot_stitle, title_size=18,eq_bd_h
   tag <- textGrob(plot_lab,x=0.05,gp=gpar(col="black",fontsize=title_size+4,fontface ='bold'))
   pde_eq <- grobTree(roundrectGrob(gp=gpar(fill="grey90",col="grey90"),width=eq_bd_w,height=eq_bd_h,r=unit(0.3, "snpc")),
                      textGrob(plot_stitle, x=0.5, gp=gpar(col="black", fontsize=title_size-4)))
+  # return(arrangeGrob(grobTree(tag,title), pde_eq, nrow=2, heights=ratio))
   return(arrangeGrob(grobTree(tag,title), pde_eq, nrow=1, widths=ratio))
+  # return(grobTree(tag,title, pde_eq))
 }
+# layout_matrix <- matrix(c(rep(1,10),rep(2,12),rep(3,1)),ncol=1)
 ggplot_heights <- c(15,12)
 rect1<- data.frame(xmin=-Inf, xmax=Inf, ymin=0.8, ymax=Inf)
+# layout_matrix_all <- matrix(c(rep(1,15),rep(3,1)),ncol=1)
 base_text_size <- 16
 plot_theme <- theme(
   axis.line = element_line(colour = "black"),
@@ -85,8 +89,9 @@ ggplot_heights2 <- c(10,1)
 turn_off_legend <- function(p_ggplot){
   p_ggplot+theme(legend.position = "none")
 }
-
-data_path <- "D:/GitHub/ARGOS-RAL"
+data_path <- "C:/Users/cfzh32/Documents/GitHub/Weizhen-Li/paper_test/"
+# data_path <- "~/GitHub/Weizhen-Li/paper_test/"
+# data_path <- "D:/GitHub/Weizhen-Li/paper_test/"
 setwd(paste0(data_path,".."))
 shapes <- c(21,22,24,25)
 # sizes <- c(6,5,4,4)-2
@@ -94,12 +99,12 @@ sizes <- c(3.5,2.5,2,2)
 alpha=alpha_value <- 0.6
 stroke_value <- 0.5
 lwd_size=0.7
-legend_labs <- c('ARGOS-RAL',expression(TSTRidge ~~ (d[tol] == 0.2)), expression(TSTRidge ~~ (d[tol] == 2)), expression(TSTRidge ~~ (d[tol] == 10)))
-load('pde_solver_data/pde_data1.RData')
+legend_labs <- c('ARGOS-RAL',expression(STRidge ~~ (d[tol] == 0.2)), expression(STRidge ~~ (d[tol] == 2)), expression(STRidge ~~ (d[tol] == 10)))
+load('paper_test/more_test2/pde_data1.RData')
 colors <- c("#F1766D","#21F5D7", "#56ABED", "#6261FF")
 ## ----bur plot, fig.height=4, fig.width=8-----------------------------------------------
 ## Burgers plots --------------------------------
-path.burgers <- ('pde_solver_data/burgers.mat')
+path.burgers <- ('data/burgers.mat')
 burgers.mat <- readMat(path.burgers)
 burgers.t <- as.numeric(burgers.mat[['t']])
 burgers.x <- as.numeric(burgers.mat[['x']])
@@ -109,12 +114,17 @@ gg_bur_data <- cbind.data.frame(x = rep(burgers.x,length(burgers.t)), t = rep(bu
 color_sacle <- ramp.col(col = c("#fafafa", "#d7191c"),n=200)
 bur_sol_plot <- ggplot(gg_bur_data, aes(x, t, fill= u)) + geom_tile()+
   scale_fill_gradientn(colors = color_sacle) +
+  # scale_fill_distiller(palette = "Spectral") + 
+  # labs(title='Burgers', tag='A', subtitle = TeX('$u_t= -uu_x + 0.1 u_{xx}$')) +
+  # labs(title='Burgers', tag='A') +
   solution_theme+
+  # annotate('label',x=0,y=12.1,label='                                    ',fill = 'grey90',label.size=NA,size=5.7)+
+  # annotate('label',x=5,y=1,label=TeX('$u_t= -uu_x + 0.1 u_{xx}$'),fill = 'grey90',label.size=NA,size=5.7)+
   coord_cartesian(clip="off")
 
 ## bur noisy data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/", "bur_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"Tests/Outputs/", "bur_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path, "bur_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path, "bur_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(bur_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(bur_density_noise_ada_lasso_pareto) <- 'our'
@@ -123,8 +133,9 @@ dens_snr_all <- c(bur_density_noise_ada_lasso_pareto, bur_density_noise_rudy)
 snr_db_seq <- c(seq(0, 40, 2), Inf) # SNR_dB grid
 eta <- 10^(-snr_db_seq/20)
 snr_db_seq1 <- c(seq(0, 40, 2), 45)
-snr_db_seq2 <- c(seq(0, 40, 2),  45) 
-snr_db_seq3 <- c(as.character(seq(0, 40, 2)), expression(infinity)) 
+snr_db_seq2 <- c(seq(0, 40, 2),  45) # c(seq(20, 40, 2), 42.5, 45)
+snr_db_seq3 <- c(as.character(seq(0, 40, 2)), expression(infinity)) # c(as.character(seq(20, 40, 2)), "...", "Inf")
+# snr_db_seq3[c(1,3,5,7,9,11,13,15,17,19)+1] <- ''
 snr_db_seq3[-(3*(0:(length(snr_db_seq)/2))+1)] <- ''
 
 bur_count_vector_snr <- data.frame(SNR_dB = 0, Correct = 0, Incorrect = 0, method0 = '0')
@@ -142,7 +153,7 @@ bur_noise_gather_df <- bur_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(bur_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 bur_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   bur_count_vector_snr$method[which(bur_count_vector_snr$method0==unique(bur_count_vector_snr$method0)[i])] <- method_label[i]
@@ -150,14 +161,22 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 bur_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
+  # geom_rect(aes(xmin=rect1$xmin,xmax=rect1$xmax,ymin=rect1$ymin,ymax=rect1$ymax),fill="#9de0e6",alpha=0.01)+
   geom_rect(data=rect1,aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax),alpha=0.2,fill="#9de0e6")+
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=bur_count_vector_snr, aes(x=SNR_dB, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=bur_count_vector_snr,alpha=alpha_value,stroke=stroke_value,aes(x=SNR_dB, y=Correct, shape=method,size=method,fill = method)) + 
+  # ylab("Probability of correct identification") +  xlab("SNR(dB)")+
   ylab("Success rate") +  xlab("SNR(dB)")+
+  # xlab(TeX("Noise magnitude ($\\eta$*sd(u))")) +
   scale_x_continuous(breaks = snr_db_seq2, labels = snr_db_seq3)+
   scale_size_manual(values=sizes, breaks=unique(bur_count_vector_snr$method),
                     labels = legend_labs)+
@@ -168,6 +187,7 @@ bur_SNR_plot <- ggplot() +
   scale_color_manual(values=colors, breaks=unique(bur_count_vector_snr$method),
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
+  # scale_y_continuous(labels = y_labels,breaks = y_breaks,limits = c(NA, max(y_breaks))) +
   plot_theme + legend_guides +
   guides(x = guide_axis_truncated(
     trunc_lower = c(-Inf, xend + extra_x/2),
@@ -179,8 +199,8 @@ bur_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## bur noiseless plot ----------------------
-load(paste0(data_path,"Tests/Outputs/","bur_SG_noiseless_seed_10_success_rate_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"Tests/Outputs/","bur_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"bur_SG_noiseless_seed_10_success_rate_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"bur_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.2,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -204,7 +224,7 @@ noise_gather_df_all <- bur_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(bur_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 bur_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   bur_count_vector_n$method[which(bur_count_vector_n$method0==unique(bur_count_vector_n$method0)[i])] <- method_label[i]
@@ -217,8 +237,11 @@ rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
 colors <- c(ggcol[1],rudy_color)
 colors <- c("#F1766D","#21F5D7", "#56ABED", "#6261FF")
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
+# xlables[c(1,3,5,7,9)+1] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(256*101)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 bur_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -226,7 +249,10 @@ bur_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=bur_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=bur_count_vector_n,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ #geom_line() + 
+  # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(bur_count_vector_n$method),
                     labels = legend_labs)+
@@ -237,7 +263,9 @@ bur_N_plot <- ggplot() +
   scale_color_manual(values=colors, breaks=unique(bur_count_vector_snr$method),
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
+  # scale_y_continuous(labels = y_labels,breaks = y_breaks,limits = c(NA, max(y_breaks))) +
   plot_theme + legend_guides
+# theme_classic(18)
 ## out burgers -----------------------
 legend_n <- get_legend(bur_N_plot+theme(legend.position='bottom'))
 bur_plot <- arrangeGrob(bur_SNR_plot+guides(color='none')+theme(legend.position = 'none'), 
@@ -257,12 +285,17 @@ gg_ad_data <- cbind.data.frame(x = rep(ad.x,length(ad.t)), t = rep(ad.t,each=len
 color_sacle <- ramp.col(col = c("#fafafa", "#d7191c"),n=200)
 ad_sol_plot <- ggplot(gg_ad_data, aes(x, t, fill= c)) + geom_tile()+
   scale_fill_gradientn(colors = color_sacle) +
+  # scale_fill_distiller(palette = "Spectral") + 
+  # labs(title='adgers', tag='A', subtitle = TeX('$u_t= -uu_x + 0.1 u_{xx}$')) +
+  # labs(title='adgers', tag='A') +
   solution_theme+
+  # annotate('label',x=0,y=12.1,label='                                    ',fill = 'grey90',label.size=NA,size=5.7)+
+  # annotate('label',x=5,y=1,label=TeX('$u_t= u_{xx} - u_{x}$'),fill = 'grey90',label.size=NA,size=5.7)+
   coord_cartesian(clip="off")
 
 ## ad noisy data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/", "more_test2/ad_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/", "more_test2/ad_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path, "more_test2/ad_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path, "more_test2/ad_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(ad_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(ad_density_noise_ada_lasso_pareto) <- 'our'
@@ -271,8 +304,9 @@ dens_snr_all <- c(ad_density_noise_ada_lasso_pareto, ad_density_noise_rudy)
 snr_db_seq <- c(seq(0, 40, 2), Inf) # SNR_dB grid
 eta <- 10^(-snr_db_seq/20)
 snr_db_seq1 <- c(seq(0, 40, 2), 45)
-snr_db_seq2 <- c(seq(0, 40, 2),  45) 
-snr_db_seq3 <- c(as.character(seq(0, 40, 2)), expression(infinity)) 
+snr_db_seq2 <- c(seq(0, 40, 2),  45) # c(seq(20, 40, 2), 42.5, 45)
+snr_db_seq3 <- c(as.character(seq(0, 40, 2)), expression(infinity)) # c(as.character(seq(20, 40, 2)), "...", "Inf")
+# snr_db_seq3[c(1,3,5,7,9,11,13,15,17,19)+1] <- ''
 snr_db_seq3[-(3*(0:(length(snr_db_seq)/2))+1)] <- ''
 snr_db_seq3[length(snr_db_seq3)] <- expression(infinity)
 
@@ -291,7 +325,7 @@ ad_noise_gather_df <- ad_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(ad_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 ad_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   ad_count_vector_snr$method[which(ad_count_vector_snr$method0==unique(ad_count_vector_snr$method0)[i])] <- method_label[i]
@@ -299,6 +333,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 ad_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -306,7 +345,9 @@ ad_SNR_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=ad_count_vector_snr, aes(x=SNR_dB, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=ad_count_vector_snr,alpha=alpha_value,stroke=stroke_value,aes(x=SNR_dB, y=Correct,shape=method,size=method,fill = method)) + 
+  # ylab("Probability of correct identification") +  xlab("SNR(dB)")+
   ylab("Success rate") +  xlab("SNR(dB)")+
+  # xlab(TeX("Noise magnitude ($\\eta$*sd(u))")) +
   scale_x_continuous(breaks = snr_db_seq2, labels = snr_db_seq3)+
   scale_size_manual(values=sizes, breaks=unique(ad_count_vector_snr$method),
                     labels = legend_labs)+
@@ -317,6 +358,7 @@ ad_SNR_plot <- ggplot() +
   scale_color_manual(values=colors, breaks=unique(ad_count_vector_snr$method),
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
+  # scale_y_continuous(labels = y_labels,breaks = y_breaks,limits = c(NA, max(y_breaks))) +
   plot_theme + legend_guides +
   guides(x = guide_axis_truncated(
     trunc_lower = c(-Inf, xend + extra_x/2),
@@ -328,8 +370,8 @@ ad_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## ad noiseless plot ----------------------
-load(paste0(data_path,"Tests/Outputs/","more_test2/ad_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","more_test2/ad_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"more_test2/ad_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"more_test2/ad_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,5.2,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -353,14 +395,23 @@ noise_gather_df_all <- ad_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(ad_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 ad_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   ad_count_vector_n$method[which(ad_count_vector_n$method0==unique(ad_count_vector_n$method0)[i])] <- method_label[i]
 }
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
+# xlables[c(1,3,5,7,9)+1] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(201*1001)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 ad_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -368,7 +419,10 @@ ad_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=ad_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=ad_count_vector_n,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) +
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
+  # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(ad_count_vector_n$method),
                     labels = legend_labs)+
@@ -379,7 +433,9 @@ ad_N_plot <- ggplot() +
   scale_color_manual(values=colors, breaks=unique(ad_count_vector_n$method),
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
+  # scale_y_continuous(labels = y_labels,breaks = y_breaks,limits = c(NA, max(y_breaks))) +
   plot_theme + legend_guides
+# theme_classic(18)
 ## out adv -----------------------
 legend_n <- get_legend(ad_N_plot+theme(legend.position='bottom'))
 ad_plot <- arrangeGrob(ad_SNR_plot+guides(color='none')+theme(legend.position = 'none'), 
@@ -394,7 +450,7 @@ ad_plot2 <- arrangeGrob(ad_title, ad_sol_plot,ad_plot1,nrow=3,heights =c(2,7,10)
 
 ## ----NS plot , fig.height=4, fig.width=8-----------------------------------------------
 # NS plots --------------------------
-path = './pde_solver_data/NS/ibpm15300.txt'
+path = './data/ibpm15300.plt'
 library(ggplot2);library(plot3D);library(RColorBrewer)
 gre <- read.table(path,sep='',header=F,fill=T,skip=6,
                   col.names=c('x','y','u','v','Vorticity'))
@@ -417,17 +473,22 @@ plot_data$w[which(plot_data$w > 3)] <- 3
 plot_data$w[which(plot_data$w < -3)] <- -3
 
 myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
+# color_sacle <- c(ramp.col(col = c("#2c7bb6", "white"),n=100),ramp.col(col = c("white", "#d7191c"),n=100))
 color_sacle <- c(ramp.col(col = c("#3288BD", "white"),n=100),ramp.col(col = c("white", "#d7191c"),n=100))
 NS_sol_plot <- ggplot()+geom_raster(data=plot_data,aes(x=x,y=y,fill=w))+
+  # scale_fill_distiller(palette = "Spectral",limits = c(-3,3))+
   scale_fill_gradientn(colors=color_sacle,limits = c(-3,3),breaks=c(-3,0,3))+
+  # labs(title='Navier-Stokes', tag='B', subtitle = TeX('$\\omega_t=0.01\\omega_{xx}+0.01\\omega_{yy}-u\\omega_x-v\\omega_y$')) + 
   geom_segment(mapping=aes(x=c(xmin,xmin,xmin,xmax),y=c(ymin,ymax,ymin,ymin),
                            xend=c(xmax,xmax,xmin,xmax),yend=c(ymin,ymax,ymax,ymax)),
                color=2)+
   solution_theme + guides(fill = guide_colourbar(nbin = 3))+
+  # annotate('label',x=4.5,y=4.9,label='                                        ',
+  #          fill = 'grey90',label.size=NA,size=9)+
   coord_cartesian(clip="off")
 ## NS noise data plot -------------------------
-load(paste0(data_path,"Tests/Outputs/","NS_SG_noise_density_seed_10_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","NS_SG_noise_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"NS_SG_noise_density_seed_10_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"NS_SG_noise_seed_10_rudy_d_thred.RData"))
 
 dens_fun <- function(noise_coeff, true_terms = c("w_{xx}", "w_{yy}", "uw_{x}", "vw_{y}")){
   dens_noise <- sapply(seq_along(noise_coeff), function(i){
@@ -445,7 +506,8 @@ noise = snr_db_seq <- c(seq(10, 40, 2), Inf) # SNR_dB grid
 eta <- 10^(-snr_db_seq/20)
 snr_db_seq1 <- c(seq(10, 40, 2), 45)
 snr_db_seq2 <- c(seq(10, 40, 2),  45) # c(seq(20, 40, 2), 42.5, 45)
-snr_db_seq3 <- c(as.character(seq(10, 40, 2)), expression(infinity)) 
+snr_db_seq3 <- c(as.character(seq(10, 40, 2)), expression(infinity)) # c(as.character(seq(20, 40, 2)), "...", "Inf")
+# snr_db_seq3[c(2,4,6,8,10,12,14,16,18,20)] <- ''
 snr_db_seq3[-(3*(0:(length(snr_db_seq)/2))+1)] <- ''
 # snr_db_seq3 <- snr_db_seq3[-c(1:6)]
 snr_db_seq3[length(snr_db_seq3)] <- expression(infinity)
@@ -466,7 +528,7 @@ for(m_names in names(dens_all_noise)){
 }
 count_vector_snr <- count_vector_snr[-1, ]
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   count_vector_snr$method[which(count_vector_snr$method0==unique(count_vector_snr$method0)[i])] <- method_label[i]
@@ -479,6 +541,11 @@ noise_gather_df <- count_vector_snr %>%
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 NS_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -505,11 +572,12 @@ NS_SNR_plot <- ggplot() +
   annotate("segment", 
            x = myseg$x, xend = myseg$xend,
            y = myseg$y + 0.05, yend = myseg$yend) +
-  coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
+  coord_cartesian(clip = "off", ylim = c(-0.0005, NA))#+
+  # guides(colour = guide_legend(override.aes = list(size=5)))
 
 ## noiseless data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/","NS_SG_noiseless_density_seed_10_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"Tests/Outputs/","NS_SG_noiseless_density_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"NS_SG_noiseless_density_seed_10_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"NS_SG_noiseless_density_seed_10_rudy_d_thred.RData"))
 
 # num <- round(10^(seq(log10(200), log10(3000*50), length=12)))
 num <- (seq(2, 5.0, 0.2))
@@ -541,7 +609,7 @@ for(m_names in names(dens_all_noiseless)){
   count_vector_n <- rbind.data.frame(count_vector_n, temp)
 }
 count_vector_n <- count_vector_n[-1, ]
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   count_vector_n$method[which(count_vector_n$method0==unique(count_vector_n$method0)[i])] <- method_label[i]
@@ -552,9 +620,17 @@ noise_gather_df_all <- count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(count_vector_n)-1)
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[c(2,3,5,6,8,9,11,12,14,15)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(499*199*151)*100,3)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 NS_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -562,7 +638,8 @@ NS_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=count_vector_n, alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   scale_size_manual(values=sizes, breaks=unique(count_vector_n$method), 
                     labels = legend_labs)+
   scale_fill_manual(values=colors, breaks=unique(count_vector_n$method), 
@@ -571,6 +648,7 @@ NS_N_plot <- ggplot() +
                      labels = legend_labs)+
   scale_color_manual(values=colors, breaks=unique(count_vector_n$method),
                      labels = legend_labs)+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   labs(colour = 'Methods', shape='Methods',color='Methods')+
   plot_theme + legend_guides
@@ -598,8 +676,8 @@ cable_sol_plot <- ggplot(gg_cable_data, aes(x, t, fill= u)) + geom_tile()+
   coord_cartesian(clip="off")
 
 ## cable noisy data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/", "more_test2/cable_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/", "more_test2/cable_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path, "more_test2/cable_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path, "more_test2/cable_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(cable_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(cable_density_noise_ada_lasso_pareto) <- 'our'
@@ -629,7 +707,7 @@ cable_noise_gather_df <- cable_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(cable_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 cable_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   cable_count_vector_snr$method[which(cable_count_vector_snr$method0==unique(cable_count_vector_snr$method0)[i])] <- method_label[i]
@@ -637,6 +715,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 cable_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -669,8 +752,8 @@ cable_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## cable noiseless plot ----------------------
-load(paste0(data_path,"Tests/Outputs/","more_test2/cable_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","more_test2/cable_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"more_test2/cable_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"more_test2/cable_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.4,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -694,15 +777,23 @@ noise_gather_df_all <- cable_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(cable_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 cable_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   cable_count_vector_n$method[which(cable_count_vector_n$method0==unique(cable_count_vector_n$method0)[i])] <- method_label[i]
 }
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[c(1,3,5,7,9)+1] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(81*501)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 cable_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -710,7 +801,10 @@ cable_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=cable_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=cable_count_vector_n, alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
+  # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(cable_count_vector_n$method), 
                     labels = legend_labs)+
@@ -738,7 +832,7 @@ cable_plot2 <- arrangeGrob(cable_title, cable_sol_plot, cable_plot1, nrow=3,heig
 
 ## ----RD plot, fig.height=4, fig.width=8------------------------------------------------
 # RD plots -------------------------------
-RD.mat <- readMat('pde_solver_data/reaction_diffusion_t_1.mat')
+RD.mat <- readMat('data/reaction_diffusion_t_1.mat')
 RD.t <- as.numeric(RD.mat[['t']])
 RD.x <- as.numeric(RD.mat[['x']])
 RD.y <- as.numeric(RD.mat[['y']])
@@ -754,13 +848,20 @@ RD_sol_plot <- ggplot(gg_RD_data, aes(x, y, fill= value))+
   geom_raster()+
   facet_wrap(~sol,ncol=2)+
   scale_fill_distiller(palette = "Spectral") + 
+  # labs(title='Reaction-diffusion', tag='C', 
+  #      subtitle = expression(atop(u[t] == 0.1*u[xx] + 0.1*u[yy] + u - u*v^{2} - u^{3} + v^{3} + u^{2}*v,
+  #                                 v[t] == 0.1*v[xx] + 0.1*v[yy] + v - u*v^{2} - u^{3} - v^{3} - u^{2}*v))) +
+  # labs(title='Reaction-diffusion', tag='C', subtitle = expression('0.1*[xx]'))+
   solution_theme + 
   theme(strip.text = element_text(size = 16),
+        # strip.background = element_rect(fill = 'grey90',color='grey90')
         ) +
+  # annotate('label',x=c(5,-5),y=22,label='        ',
+  #          fill = 'grey90',label.size=NA,size=20)+
   coord_cartesian(clip="off")
 ## noise data plot -------------------------
-load(paste0(data_path,"Tests/Outputs/","../RD/RD_SG_noise_density_seed_10_snr_ada_lasso_pareto_AIC.RData"))
-load(paste0(data_path,"Tests/Outputs/","RD_SG_noise_density_seed_10_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"../RD/RD_SG_noise_density_seed_10_snr_ada_lasso_pareto_AIC.RData"))
+load(paste0(data_path,"RD_SG_noise_density_seed_10_snr_rudy_d_thred.RData"))
 
 dens_fun_RD <- function(noise_coeff, true_terms, which){
   dens_noise <- sapply(seq_along(noise_coeff), function(i){
@@ -831,7 +932,7 @@ rownames(count_vector_snr) <- seq(1, nrow(count_vector_snr))
 noise_gather_df_all <- count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(count_vector_snr)-1)
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   count_vector_snr$method[which(count_vector_snr$method0==unique(count_vector_snr$method0)[i])] <- method_label[i]
@@ -839,6 +940,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq1
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 RD_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -868,9 +974,9 @@ RD_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## noiseless data ----------------------------
-load(paste0(data_path,"Tests/Outputs/","RD_SG_noiseless_seed_10_ada_lasso_pareto.RData"))
+load(paste0(data_path,"RD_SG_noiseless_seed_10_ada_lasso_pareto.RData"))
 # load("RD/RD_SG_noiseless_200_150000_seed10_MSA_lasso_pareto_AIC.RData")
-load(paste0(data_path,"Tests/Outputs/","RD_SG_noiseless_seed_10_rudy_d_thred.RData"))
+load(paste0(data_path,"RD_SG_noiseless_seed_10_rudy_d_thred.RData"))
 # num <- round(10^(seq(2.2, 5, 0.2)))
 num <- seq(2.2, 5, 0.2)
 
@@ -903,7 +1009,7 @@ rownames(count_vector_n) <- seq(1, nrow(count_vector_n))
 noise_gather_df_all <- count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(count_vector_n)-1)
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   count_vector_n$method[which(count_vector_n$method0==unique(count_vector_n$method0)[i])] <- method_label[i]
@@ -911,11 +1017,18 @@ for(i in seq_along(method_label)){
 
 x_limits <- num
 x_breaks <- pretty_breaks()(num)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[c(2,4,6,8,10,12,14)] <- ''
 # xlables[-c(3*(0:5)+1)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(512*512*101)*100,3)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 RD_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -923,7 +1036,8 @@ RD_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=count_vector_n,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables)+
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(count_vector_n$method), 
@@ -973,8 +1087,8 @@ kdv_sol_plot <- ggplot(gg_kdv_data) +
   coord_cartesian(clip="off")
 
 ## kdv noisy plot -----------------------
-load(paste0(data_path,"Tests/Outputs/","kdv_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","kdv_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path,"kdv_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path,"kdv_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(kdv_density_noise_rudy_list) <- paste0("rudy_", d_tols)
 dens_snr_all <- c(list(our=kdv_density_noise_ada_lasso_pareto[[1]]), kdv_density_noise_rudy_list)
@@ -1002,7 +1116,7 @@ noise_gather_df <- kdv_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(kdv_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 kdv_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   kdv_count_vector_snr$method[which(kdv_count_vector_snr$method0==unique(kdv_count_vector_snr$method0)[i])] <- method_label[i]
@@ -1010,6 +1124,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 kdv_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1039,8 +1158,8 @@ kdv_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## kdv noiseless plot -----------------------
-load(paste0(data_path,"Tests/Outputs/","kdv_SG_noiseless_seed_10_success_rate_pareto_AIC.RData"))
-load(paste0(data_path,"Tests/Outputs/","kdv_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"kdv_SG_noiseless_seed_10_success_rate_pareto_AIC.RData"))
+load(paste0(data_path,"kdv_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 # num <- round(10^(seq(2,4.8,0.2)))
 num <- seq(2,4.8,0.2)
 d_tols <- c(0.2,2,10)
@@ -1062,15 +1181,23 @@ rownames(kdv_count_vector_n) <- seq(1, nrow(kdv_count_vector_n))
 noise_gather_df_all <- kdv_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(kdv_count_vector_n)-1)
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 kdv_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   kdv_count_vector_n$method[which(kdv_count_vector_n$method0==unique(kdv_count_vector_n$method0)[i])] <- method_label[i]
 }
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[c(2,4,6,8,10,12,14)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(201*512)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 kdv_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1078,7 +1205,8 @@ kdv_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=kdv_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=kdv_count_vector_n,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables)+
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(kdv_count_vector_n$method), 
@@ -1115,8 +1243,12 @@ qho_sol_plot <- ggplot(gg_qho_data, aes(x, t, fill= u)) + geom_tile()+
   solution_theme+
   coord_cartesian(clip="off")
 
+# point_shapes_qho <- c(15,rep(16,3),17)
+# plot_legends_qho <- c('ARGOS-RAL',TeX('STRidge ($d_{tol}$=0.2)'), TeX('STRidge ($d_{tol}$=2)'), TeX('STRidge ($d_{tol}$=10)'), 'Backward')
+# plot_legends_qho <- c('ARGOS-RAL',TeX('STRidge ($d_{tol}$=0.2)'), TeX('STRidge ($d_{tol}$=2)'), TeX('STRidge ($d_{tol}$=10)'))
+# colors_qho <- c(ggcol[1],rudy_color,'#40d667')
 ## qho noisy plot -----------------------
-load(paste0(data_path,"Tests/Outputs/","qho_SG_noise_seed_10_samp_100_snr_ada_rudy_back.RData"))
+load(paste0(data_path,"qho_SG_noise_seed_10_samp_100_snr_ada_rudy_back.RData"))
 d_tols <- c(0.2,2,10)
 dens_snr_all <- list(our = qho_density_noise_ada_AIC, rudy_0.2 = qho_density_noise_rudy_0.2,
                      rudy_2 = qho_density_noise_rudy_2, rudy_10 = qho_density_noise_rudy_10)
@@ -1145,7 +1277,8 @@ noise_gather_df <- qho_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(qho_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+# method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"), 'Backward')
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 qho_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   qho_count_vector_snr$method[which(qho_count_vector_snr$method0==unique(qho_count_vector_snr$method0)[i])] <- method_label[i]
@@ -1153,6 +1286,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 qho_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1171,6 +1309,7 @@ qho_SNR_plot <- ggplot() +
   scale_color_manual(values=colors, breaks=unique(qho_count_vector_snr$method),
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
+  # labs(colour = 'Methods', shape='Methods', size='Methods',title = 'QHO noisy data', tag = 'a')+
   guides(x = guide_axis_truncated(
     trunc_lower = c(-Inf, xend + 20 + extra_x/2),
     trunc_upper = c(xstart +20 + extra_x/2, Inf)
@@ -1179,15 +1318,20 @@ qho_SNR_plot <- ggplot() +
   annotate("segment", 
            x = myseg2$x, xend = myseg2$xend,
            y = myseg2$y + 0.05, yend = myseg2$yend)+
-  coord_cartesian(clip = "off", ylim = c(-0.0005, NA)) 
+  # annotate("segment", 
+  #          x = myseg2$x, xend = myseg2$xend,
+  #          y = myseg2$y + 0.07, yend = myseg2$yend-0.021)+
+  coord_cartesian(clip = "off", ylim = c(-0.0005, NA)) #+
+  # guides(colour = guide_legend(override.aes = list(size=5)))
 
 ## qho noiseless plot -----------------------
-load(paste0(data_path,"Tests/Outputs/","qho_SG_noiseless_seed_10_n_ada_rudy_back.RData"))
+load(paste0(data_path,"qho_SG_noiseless_seed_10_n_ada_rudy_back.RData"))
 # num <- round(10^(seq(2.2,5.2,0.2)))
 num <- seq(2.2,5.2,0.2)
 d_tols <- c(0.2,2,10)
 dens_n_all <- list(our = qho_density_noiseless_ada_AIC, rudy_0.2 = qho_density_noiseless_rudy_0.2, 
                    rudy_2 = qho_density_noiseless_rudy_2, rudy_10 = qho_density_noiseless_rudy_10)
+# back = qho_density_noiseless_back)
 
 qho_count_vector_n <- data.frame(n = 0, Correct = 0, Incorrect = 0, method0 = '0')
 for(m_names in names(dens_n_all)){
@@ -1204,16 +1348,25 @@ rownames(qho_count_vector_n) <- seq(1, nrow(qho_count_vector_n))
 noise_gather_df_all <- qho_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(qho_count_vector_n)-1)
-# method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"),'Backward')
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+# method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"),'Backward')
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 qho_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   qho_count_vector_n$method[which(qho_count_vector_n$method0==unique(qho_count_vector_n$method0)[i])] <- method_label[i]
 }
 
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
+# xlables[seq(2,16,2)] <- ''
+# xlables[-c(3*(0:5)+1)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(401*513)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 qho_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1221,7 +1374,10 @@ qho_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=qho_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=qho_count_vector_n, alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables)+
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
+  # labs(x="N", y="Success rate", title = 'QHO noiseless data', tag = 'b')+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(qho_count_vector_n$method), 
                     labels = legend_labs)+
@@ -1233,6 +1389,7 @@ qho_N_plot <- ggplot() +
                      labels = legend_labs)+
   labs(fill = 'Methods', shape='Methods', size='Methods',color='Methods')+
   plot_theme + legend_guides
+  # guides(colour = guide_legend(override.aes = list(size=5)))
 
 ## compose plots --------------------------
 legend_n <- get_legend(qho_N_plot+theme(legend.position='bottom'))
@@ -1255,8 +1412,8 @@ trans_sol_plot <- ggplot(gg_trans_data, aes(x, t, fill= u)) + geom_tile()+
   solution_theme+
   coord_cartesian(clip="off")
 ## trans noisy data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/", "more_test2/trans_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/", "more_test2/trans_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path, "more_test2/trans_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path, "more_test2/trans_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(trans_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(trans_density_noise_ada_lasso_pareto) <- 'our'
@@ -1286,7 +1443,7 @@ trans_noise_gather_df <- trans_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(trans_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 trans_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   trans_count_vector_snr$method[which(trans_count_vector_snr$method0==unique(trans_count_vector_snr$method0)[i])] <- method_label[i]
@@ -1294,6 +1451,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 trans_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1326,8 +1488,8 @@ trans_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## trans noiseless plot ----------------------
-load(paste0(data_path,"Tests/Outputs/","more_test2/trans_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","more_test2/trans_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"more_test2/trans_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"more_test2/trans_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,5,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -1351,14 +1513,23 @@ noise_gather_df_all <- trans_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(trans_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 trans_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   trans_count_vector_n$method[which(trans_count_vector_n$method0==unique(trans_count_vector_n$method0)[i])] <- method_label[i]
 }
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
+# xlables[-c(3*(0:5)+1)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(601*201)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 trans_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1366,7 +1537,10 @@ trans_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=trans_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=trans_count_vector_n, alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) +
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
+  # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
+  # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
   scale_size_manual(values=sizes, breaks=unique(trans_count_vector_n$method), 
                     labels = legend_labs)+
@@ -1402,8 +1576,8 @@ heat_sol_plot <- ggplot(gg_heat_data, aes(x, t, fill= u)) + geom_tile()+ geom_co
   solution_theme+
   coord_cartesian(clip="off")
 ## heat noisy data plot ---------------------------
-load(paste0(data_path,"Tests/Outputs/", "more_test2/heat_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/", "more_test2/heat_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
+load(paste0(data_path, "more_test2/heat_SG_noise_seed_100_samp_100_snr_ada_lasso_pareto.RData"))
+load(paste0(data_path, "more_test2/heat_SG_noise_seed_100_samp_100_snr_rudy_d_thred.RData"))
 d_tols <- c(0.2,2,10)
 names(heat_density_noise_rudy) <- paste0("rudy_", d_tols)
 names(heat_density_noise_ada_lasso_pareto) <- 'our'
@@ -1431,7 +1605,7 @@ heat_noise_gather_df <- heat_count_vector_snr %>%
   gather("Condition", "Value",
          3:ncol(heat_count_vector_snr)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 heat_count_vector_snr$method <- NA
 for(i in seq_along(method_label)){
   heat_count_vector_snr$method[which(heat_count_vector_snr$method0==unique(heat_count_vector_snr$method0)[i])] <- method_label[i]
@@ -1439,6 +1613,11 @@ for(i in seq_along(method_label)){
 
 x_limits <- snr_db_seq
 x_breaks <- pretty_breaks()(snr_db_seq)
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
 heat_SNR_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1471,8 +1650,8 @@ heat_SNR_plot <- ggplot() +
   coord_cartesian(clip = "off", ylim = c(-0.0005, NA))
 
 ## heat noiseless plot ----------------------
-load(paste0(data_path,"Tests/Outputs/","more_test2/heat_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
-load(paste0(data_path,"Tests/Outputs/","more_test2/heat_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
+load(paste0(data_path,"more_test2/heat_SG_noiseless_seed_10_success_rate_ada_lasso_pareto.RData"))
+load(paste0(data_path,"more_test2/heat_SG_noiseless_seed_10_success_rate_rudy_d_thred.RData"))
 num <- (seq(2,4.8,0.2))
 
 d_tols <- c(0.2,2,10)
@@ -1496,15 +1675,23 @@ noise_gather_df_all <- heat_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(heat_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 heat_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   heat_count_vector_n$method[which(heat_count_vector_n$method0==unique(heat_count_vector_n$method0)[i])] <- method_label[i]
 }
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
+
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[c(1,3,5,7,9,11,13)+1] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(501*151)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 heat_N_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1512,7 +1699,8 @@ heat_N_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=heat_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=heat_count_vector_n,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) +
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
   # labs(x="N", y="Success rate")+
   labs(x="N", y=" ")+
@@ -1569,7 +1757,7 @@ keller_sol_plot <- ggplot(gg_keller_data, aes(x, t, fill= value))+
   coord_cartesian(clip="off")
 
 ## keller noiseless ------------------
-load(paste0(data_path,"Tests/Outputs/","more_test2/keller_segel_FD_noiseless_ham8_ada_rudy_back.RData"))
+load(paste0(data_path,"more_test2/keller_segel_FD_noiseless_ham8_ada_rudy_back.RData"))
 
 # num <- 10^(seq(2.4,5,0.2)) 
 num <- (seq(2.4,5,0.2)) 
@@ -1594,16 +1782,23 @@ noise_gather_df_all <- keller_count_vector_n %>%
   gather("Condition", "Value",
          3:ncol(keller_count_vector_n)-1)
 
-method_label <- c("RAL", paste0("TSTRidge (d_tol=", d_tols,")"))
+method_label <- c("RAL", paste0("STRidge (d_tol=", d_tols,")"))
 keller_count_vector_n$method <- NA
 for(i in seq_along(method_label)){
   keller_count_vector_n$method[which(keller_count_vector_n$method0==unique(keller_count_vector_n$method0)[i])] <- method_label[i]
 }
 
+# colours <- c("#a670b0",
+#              "#a58d48")
+# ggcol <- c("#F8766D","#00BA38","#619CFF")
+# rudy_color <- colorRampPalette(c("#4bf5db","#6261ff"))(length(d_tols))
+# colors <- c(ggcol[1],rudy_color)
 
-xlables <- unname(latex2exp::TeX(paste0('$10^{',round(log10(num),1),'}$')))
+xlables <- unname(latex2exp::TeX(paste0('$10^{',round((num),1),'}$')))
 # xlables[-c(3*(0:5)+1)] <- ''
 xlables[-(3*(0:(length(num)/2))+1)] <- ''
+second_xlables <- round(10^num/(1001*10001)*100,2)
+second_xlables[-(3*(0:(length(num)/2))+1)] <- ''
 
 keller_N_FD_plot <- ggplot() + 
   geom_hline(yintercept = 0.8, lty=2)+
@@ -1611,7 +1806,8 @@ keller_N_FD_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=keller_count_vector_n, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=keller_count_vector_n, alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
   labs(title='Finite difference')+
   # labs(x="N", y="Success rate")+
@@ -1639,7 +1835,8 @@ keller_N_SG_plot <- ggplot() +
   scale_y_continuous(breaks = seq(0,1,0.2))+
   geom_line(data=keller_count_vector_n_SG, aes(x=n, y=Correct,color=method),lwd=lwd_size) +
   geom_point(data=keller_count_vector_n_SG,alpha=alpha_value,stroke=stroke_value,aes(x=n, y=Correct,shape=method,size=method,fill = method)) + 
-  scale_x_continuous(breaks = num, labels = xlables) + 
+  scale_x_continuous(breaks = num, labels = xlables,
+                     sec.axis = dup_axis(name='Percentage (%)', labels=second_xlables))+ 
   # labs(x="SNR(dB)", y="Success rate", title = TeX('Reaction-Diffusion, $\\alpha$=0.3, Inf $\\alpha$=0.5'))+
   labs(title='Savitzky-Golay filter')+
   # labs(x="N", y="Success rate")+
@@ -1671,6 +1868,20 @@ keller_plot2 <- arrangeGrob(keller_title, keller_sol_plot, keller_plot1,nrow=3,h
 # ggsave(keller_plot2, filename = 'Figures/new_figs/keller.png', width = 8, height = 8)
 # ggsave(keller_plot2, filename = 'Figures/new_figs/keller.pdf', width = 8, height = 8)
 
+## put in main paper plots ---------------------------
+# NS_plot3 <- arrangeGrob(NS_title, NS_sol_plot, NS_plot, nrow=3, heights =c(3,7,10))
+# RD_plot3 <- arrangeGrob(RD_title, RD_sol_plot, RD_plot, nrow=3,heights =c(3,7,10))
+# qho_plot3 <- arrangeGrob(qho_title, qho_sol_plot, qho_plot, nrow=3,heights =c(3,7,10))
+# bur_plot3 <- arrangeGrob(bur_title, bur_sol_plot, bur_plot, nrow=3,heights =c(3,7,10))
+# # keller_plot3 <- arrangeGrob(keller_title, keller_sol_plot, keller_plot,nrow=3,heights =c(3,7,10))
+# # put_in_main0 <- arrangeGrob(NS_plot3,RD_plot3,qho_plot3,keller_plot3, nrow=2,ncol=2)
+# put_in_main0 <- arrangeGrob(bur_plot3,NS_plot3,RD_plot3,qho_plot3, nrow=2,ncol=2)
+# put_in_main <- arrangeGrob(put_in_main0,legend_n,nrow=2, heights = c(30,1))
+# 
+# 
+# ggsave(put_in_main, filename = 'Figures/thesis_plot/out_all_out.png', width = 13, height = 13)
+# ggsave(put_in_main, filename = 'Figures/thesis_plot/out_all_out.pdf', width = 13, height = 13)
+
 ## main paperplot -----------------------
 NS_plot31 <- arrangeGrob(NS_title, arrangeGrob(NS_sol_plot, NS_plot, nrow=1, widths=c(1,2)), nrow=2, heights =c(3,12))
 RD_plot31 <- arrangeGrob(RD_title, arrangeGrob(RD_sol_plot, RD_plot, nrow=1, widths=c(1,2)), nrow=2, heights =c(3,12))
@@ -1681,9 +1892,9 @@ cable_plot31 <- arrangeGrob(cable_title, arrangeGrob(cable_sol_plot, cable_plot,
 put_in_main01 <- arrangeGrob(bur_plot31,cable_plot31,NS_plot31,RD_plot31,qho_plot31, ncol=1)
 put_in_main1 <- arrangeGrob(put_in_main01,legend_n,nrow=2, heights = c(30,1))
 
-ggsave(put_in_main1, filename = 'Figures/out_all1.png', width = 13, height = 13)
-ggsave(put_in_main1, filename = 'Figures/out_all1.pdf', width = 13, height = 13)
-ggsave(put_in_main1, filename = 'Figures/out_all1.svg', width = 13, height = 13)
+ggsave(put_in_main1, filename = 'Figures/new_figs/out_all1.png', width = 14, height = 16)
+ggsave(put_in_main1, filename = 'Figures/new_figs/out_all1.pdf', width = 14, height = 16)
+ggsave(put_in_main1, filename = 'Figures/new_figs/out_all1.svg', width = 14, height = 16)
 ## supporting doc plot ------------------------
 ad_plot31 <- arrangeGrob(ad_title, arrangeGrob(ad_sol_plot, ad_plot, nrow=1, widths=c(1,2)), nrow=2, heights =c(3,12))
 kdv_plot31 <- arrangeGrob(kdv_title, arrangeGrob(kdv_sol_plot, kdv_plot, nrow=1, widths=c(1,2)), nrow=2, heights =c(3,12))
@@ -1694,6 +1905,6 @@ heat_plot31 <- arrangeGrob(heat_title, arrangeGrob(heat_sol_plot, heat_plot, nro
 put_in_main02 <- arrangeGrob(ad_plot31,kdv_plot31,trans_plot31,heat_plot31, ncol=1)
 put_in_main2 <- arrangeGrob(put_in_main02,legend_n,nrow=2, heights = c(30,1))
 
-ggsave(put_in_main2, filename = 'Figures/out_all2.png', width = 13, height = 13)
-ggsave(put_in_main2, filename = 'Figures/out_all2.pdf', width = 13, height = 13)
-ggsave(put_in_main2, filename = 'Figures/out_all2.svg', width = 13, height = 13)
+ggsave(put_in_main2, filename = 'Figures/new_figs/out_all2.png', width = 14, height = 15)
+ggsave(put_in_main2, filename = 'Figures/new_figs/out_all2.pdf', width = 14, height = 15)
+ggsave(put_in_main2, filename = 'Figures/new_figs/out_all2.svg', width = 14, height = 15)
