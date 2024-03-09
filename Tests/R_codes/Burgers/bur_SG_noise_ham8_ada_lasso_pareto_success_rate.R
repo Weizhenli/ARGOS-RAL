@@ -7,7 +7,7 @@ set.seed(seed)
 crit = 'AIC'
 
 source('Functions/all_functions.R')
-path.burgers <- ('pde_solver_data/burgers.mat')
+path.burgers <- ('Data/burgers.mat')
 cv <- import('cv2')
 source('Functions/ada_lasso_pareto.R')
 

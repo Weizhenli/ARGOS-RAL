@@ -10,7 +10,7 @@ source('Functions/ada_lasso_pareto.R')
 # qho ----------------------
 source('Functions/all_functions.R')
 
-source("pde_solver_data/qho_solver.R")
+source("PDE_solver/qho_solver.R")
 qho.x = xx
 
 build_qho_Theta <- function(u, dx, dt, sg_para=NULL, deg_min=3, deg_max=6, width_max=10, noise=0, diff_o=3, poly_o=3,

@@ -19,12 +19,12 @@ We follow the way that Rudy [2] used in PDE-FIND ([GitHub link](https://github.c
 *NS-SG-sample.py* is used to create the candidate library for Both Navier-Stokes and Reaction-diffusion. 
 
 ### Navier-Stokes 
-The Navier-Stokes equation is solved using the Immersed Boundary Projection Method (IBPM) [3,4]. Please refer to the [GitHub repository](https://github.com/cwrowley/ibpm) for more information. All required files are located in the folder [*Solve_NS*](./Solve_NS/).
-- [*NS_SG_data.R*](./NS_SG_data.R) runs Python functions in *NS-SG-sample.py* to create the candidate library and save it as *NS_noise_data_5500\*65_seed_10_snr.RData*, which occupies 2.13 GB. Running this *.Rdata* file, we used 22 CPU cores and each uses 2 threads with about 3.5 hours. The CPU is 2nd Gen AMD EPYC 7702.
+The Navier-Stokes equation is solved using the Immersed Boundary Projection Method (IBPM) [3,4]. Please refer to the [GitHub repository](https://github.com/cwrowley/ibpm) for more information. All required files are located in the folder [*Navier-Stokes*](./Navier-Stokes/).
+- [*NS_SG_data.R*](../Data/Navier-Stokes/NS_SG_data.R) runs Python functions in *NS-SG-sample.py* to create the candidate library and save it as *NS_noise_data_5500\*65_seed_10_snr.RData*, which occupies 2.13 GB. Running this *.Rdata* file, we used 22 CPU cores and each uses 2 threads with about 3.5 hours. The CPU is 2nd Gen AMD EPYC 7702.
 
 ### Reaction-diffusion
 Reaction-diffusion is solved using *RD_solver.m*. The defined function is in *reaction_diffusion_rhs.m*. It may take about 6 hours to get the reaction-diffusion data, and the size output file *reaction_diffusion_big.mat* is about 767 MB. 
-- [*RD_SG_data.R*](./RD_SG_data.R) runs Python functions in *NS-SG-sample.py* to create the candidate library and save it as *RD_noise_data_5000\*60_seed_10_snr.RData*, which occupies 1.81 GB. Running this *.Rdata* file, we used 60 threads with about 31.5 hours. The CPU is 2nd Gen AMD EPYC 7702.
+- [*RD_SG_data.R*](../Data/Reaction-diffusion/RD_SG_data.R) runs Python functions in *NS-SG-sample.py* to create the candidate library and save it as *RD_noise_data_5000\*60_seed_10_snr.RData*, which occupies 1.81 GB. Running this *.Rdata* file, we used 60 threads with about 31.5 hours. The CPU is 2nd Gen AMD EPYC 7702.
 
 ### References
 [1] Andrei D. Polyanin and Valentin F. Zaitsev, Handbook of Nonlinear Partial Differential Equations, 2nd ed. New York: Chapman and Hall/CRC, 2012.

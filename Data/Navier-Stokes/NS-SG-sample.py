@@ -61,7 +61,7 @@ def sam_ns(num_xy,num_t,deg=None,noise=0.01,denoise='mf',boundary_max=10,deg_min
     dx = 0.02
     dy = 0.02
     
-    path2 = path + r'pde_solver_data/Solve_NS/'
+    path2 = path + r'Data/NS/' # path for solved data
     U1 = np.load(path2+'U1.npy')
     V1 = np.load(path2+'V1.npy')
     W1 = np.load(path2+'W1.npy')
@@ -220,7 +220,7 @@ def sam_rd_parallel(p,j,d,points_xyt,Un,Vn,dt,dx,dy):
 def sam_rd(num_xy,num_t,deg=None,noise=0.005,boundary_max=10,deg_min=3,deg_max=6,cores=2):
     num_xy = int(num_xy); num_t = int(num_t); boundary_max = int(boundary_max)
     deg_min = int(deg_min); deg_max = int(deg_max); cores = int(cores)
-    data = sio.loadmat(path + r'pde_solver_data/reaction_diffusion_big.mat')
+    data = sio.loadmat(path + r'Data/reaction_diffusion_big.mat') # data for reaction-diffusion solved using matlab
     t = data['t'][:,0]
     x = data['x'][0,:]
     y = data['y'][0,:]

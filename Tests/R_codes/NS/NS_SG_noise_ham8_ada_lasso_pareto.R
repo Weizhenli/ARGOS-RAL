@@ -8,7 +8,7 @@ crit = 'AIC'
 source('Functions/all_functions.R')
 ## load data and functions -------------------------------
 num_xy = 5500; num_t = 65
-load(sprintf('pde_solver_data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+load(sprintf('Data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 num_xy = 5000; num_t = 60
 
 sample_size <- 100

@@ -51,7 +51,7 @@ num <- round(10^(seq(log10(200), log10(3000*50), length=12)))
 num <- round(10^(seq(2.2, 5, 0.2)))
 # sample data
 num_xy = 5000; num_t=60
-load(sprintf('pde_solver_data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+load(sprintf('Data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 # identify 
 df <- RD_noise_data[[length(RD_noise_data)]] # noise=0
 

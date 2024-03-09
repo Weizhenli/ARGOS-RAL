@@ -8,7 +8,7 @@ crit = 'AIC' # 'AIC'
 crit = 'AIC'
 
 source('Functions/all_functions.R')
-path.kdv <- ('pde_solver_data/kdv.mat')
+path.kdv <- ('Data/kdv.mat')
 cv <- import('cv2')
 source('Functions/ada_lasso_pareto.R')
 

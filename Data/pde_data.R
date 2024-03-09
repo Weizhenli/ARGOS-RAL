@@ -1,6 +1,6 @@
 setwd('/mnt/d/GitHub/ARGOS-RAL/')
 library(reticulate)
-source_python('pde_solver_data/ode_int.py')
+source_python('PDE_solver/ode_int.py')
 
 ## advection-diffusion
 ad.x = x = seq(-10,10,0.1)
@@ -45,7 +45,7 @@ heat_u <- t(as.matrix(heat_out[[1]]))
 heat_list <- list(sol=heat_u,x=heat.x,t=heat.t)
 
 # Keller-Segel
-source_python('pde_solver_data/Keller_Segel_model.py')
+source_python('PDE_solver/Keller_Segel_model.py')
 keller.u <- t(u_u)
 keller.v <- t(v_u)
 keller_sol <- list(u=keller.u,v=keller.v)
@@ -68,8 +68,8 @@ for(i in 1:length(x)){
 trans_list <- list(sol=trans_u,x=trans.x,t=trans.t)
 
 # qho 
-source("pde_solver_data/qho_solver.R")
+source("PDE_solver/qho_solver.R")
 qho_list <- list(sol=qho.usol,x=xx,t=tt)
 
 # out
-save(ad_list,cable_list,heat_list,keller_list,trans_list,qho_list, file='pde_solver_data/pde_data1.RData')
+save(ad_list,cable_list,heat_list,keller_list,trans_list,qho_list, file='Data/pde_data1.RData')

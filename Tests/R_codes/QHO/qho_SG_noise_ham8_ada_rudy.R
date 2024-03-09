@@ -10,7 +10,7 @@ source('Functions/ada_lasso_pareto.R')
 # qho ----------------------
 source('Functions/all_functions.R')
 
-source("pde_solver_data/qho_solver.R")
+source("PDE_solver/qho_solver.R")
 qho.x = xx
 n <- length(xx)
 m <- length(tt)

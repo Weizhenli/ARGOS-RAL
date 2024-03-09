@@ -6,7 +6,7 @@ seed = 100
 set.seed(seed)
 crit = 'AIC'
 
-source_python('pde_solver_data/ode_int.py')
+source_python('PDE_solver/ode_int.py')
 source('Functions/all_functions.R')
 cv <- import('cv2')
 source('Functions/ada_lasso_pareto.R')

@@ -3,7 +3,7 @@ seed = 10 # the same in python
 set.seed(seed)
 
 # set path for NS-SG-sample.py
-source_python('pde_solver_data/NS-SG-sample.py')
+source_python('PDE_solver/NS-SG-sample.py')
 source('Functions/all_functions.R')
 
 num_xy = 5000; num_t = 60
@@ -15,9 +15,9 @@ s_time <- Sys.time()
 # Rudy gave 5000*30 we sample 5000*60
 # system.time(RD_noise_data <- lapply(0:5*0.005, function(x){sam_rd(num_xy=5000,num_t=60,noise=x,cores=20)})) 
 system.time(RD_noise_data <- lapply(eta/2, function(x){sam_rd(num_xy=5000,num_t=60,noise=x,cores=60)})) 
-save(RD_noise_data,file=sprintf('pde_solver_data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+save(RD_noise_data,file=sprintf('Data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 e_time <- Sys.time()
 difftime(e_time,s_time)
 # Time difference of 19.02622 hours
 names(RD_noise_data) <- sapply(snr_db_seq, function(x){paste0('SNR_dB=',x)})
-save(RD_noise_data,file=sprintf('pde_solver_data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+save(RD_noise_data,file=sprintf('Data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))

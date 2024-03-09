@@ -53,7 +53,7 @@ num <- 10^(seq(log10(100), log10(60*5000), length=12))
 num <- 10^(seq(2, 5.4, 0.2))
 source('Functions/ada_lasso_pareto.R')
 num_xy = 5500; num_t = 65
-load(sprintf('pde_solver_data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+load(sprintf('Data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 num_xy = 5000; num_t = 60
 fun_ada_lasso_pareto <- function(j, ...){
   # simulate data

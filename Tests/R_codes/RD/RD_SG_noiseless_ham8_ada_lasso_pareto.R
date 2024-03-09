@@ -53,7 +53,7 @@ num <- round(10^(seq(2.2, 5, 0.2)))
 source('Functions/ada_lasso_pareto.R')
 # sample data
 num_xy = 5000; num_t=60
-load(sprintf('pde_solver_data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+load(sprintf('Data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 # identify 
 
 fun_ada_lasso_pareto <- function(sam, ...){

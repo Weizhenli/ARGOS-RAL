@@ -8,7 +8,7 @@ set.seed(seed)
 library(doParallel) # start parallel computation
 
 source('Functions/all_functions.R')
-path.kdv <- ('pde_solver_data/kdv.mat')
+path.kdv <- ('Data/kdv.mat')
 #pathname <- file.path(path,'kdv.mat')
 cv <- import('cv2')
 source('/nobackup/cfzh32/for_r/functions/MSA_lasso_pareto.R')

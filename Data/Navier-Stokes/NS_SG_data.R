@@ -1,11 +1,12 @@
 rm(list=ls())
-library(glmnet);library(reticulate)
+library(reticulate)
 library(doParallel)
 seed=10
 set.seed(seed)
 
+setwd('~/GitHub/ARGOS-RAL/') # path for github repo
 # set path for NS-SG-sample.py
-source_python('pde_solver_data/NS-SG-sample.py')
+source_python('Data/NS-SG-sample.py')
 source('Functions/all_functions.R')
 
 # simulate data with noise
@@ -19,7 +20,7 @@ eta <- 10^(-snr_db_seq/20)
 
 system.time(NS_noise_data <- mclapply(eta, fun_noise, cores=2, num_xy=num_xy, num_t=num_t, mc.cores=22)) # for noise plots
 save(NS_noise_data,
-     file=sprintf('pde_solver_data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+     file=sprintf('Data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 # user   system  elapsed 
 # 91664.24  1363.84 17402.19 
 # system.time(NS_noise_data <- lapply(0:5*0.01, fun_noise, cores=10, num_xy=5000, num_t=60)) # for conditional plots
@@ -30,4 +31,4 @@ names(NS_noise_data) <- sapply(snr_db_seq, function(x){paste0('SNR_dB=',x)})
 #NS_names <- sam_ns(num_xy=100,num_t=1,noise=0.01,cores=0)
 # save data
 save(NS_noise_data,
-     file=sprintf('pde_solver_data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+     file=sprintf('Data/NS_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))

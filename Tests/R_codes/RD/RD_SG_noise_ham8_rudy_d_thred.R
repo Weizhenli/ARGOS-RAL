@@ -60,7 +60,7 @@ while(prod(num_t)>125 | prod(num_xy)>10000){
 
 ## load data and functions -------------------------
 num_xy = 5000; num_t=60
-load(sprintf('pde_solver_data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
+load(sprintf('Data/RD_noise_data_%s*%s_seed_%s_snr.RData', num_xy, num_t, seed))
 num_xy = 5000; num_t=30
 
 data_w <- tryCatch(load('Tests/temp/RD_SG_noise_index.RData'), error = function(e) NULL)
