@@ -2,8 +2,9 @@
  Automatically Extracting Partial Differential Equations from Data
 
 - All testing codes are in Tests/R_codes, and output data are in Tests/Outputs, ending with *.RData*.
-- The *pde_solver_data* folder contains all codes and data for solving PDEs used in the paper. 
+- The *Data* folder contains all PDE data used in the paper. 
 - The *Functions* folder contains all R functions used to build the candidate library and the recurrent adaptive lasso. 
+- The *PDE_solver* folder contains all codes for solving PDEs. 
 - The *Figures* folder contains the results *.png* graphs used in the paper and ann *.R* file used for creating *.png* graphs. 
 
 # Requirements
